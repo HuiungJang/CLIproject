@@ -1,5 +1,6 @@
 package com.board.run;
 
+import com.board.controller.Controller;
 import com.board.view.MainView;
 
 import java.io.IOException;
