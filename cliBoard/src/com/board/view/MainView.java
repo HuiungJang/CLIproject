@@ -18,7 +18,6 @@ public class MainView {
         while(true) {
             System.out.println("---- CLI 게시판 ----");
             System.out.println("글번호    글제목");
-            System.out.print("\t\t ");// 간격 맞추기용
             c.getPostList();
 
             System.out.println("---- 명령어 ----");

@@ -55,8 +55,7 @@ public class Controller {
 
             String tmp1 = tmp.substring(0,tmp.lastIndexOf("."));
             // 확장자 제거
-            System.out.println(count + tmp1);
-            count++;
+            System.out.println("\t\t"+ tmp1);
         }
 
     }
