@@ -16,10 +16,13 @@ public class MainView {
     public void mainView() throws IOException {
 
         while(true) {
-            System.out.println("---- 게시글 목록 ----");
-            System.out.println("게시글을 읽으려면 게시글 번호를 입력하세요");
-            System.out.println("공사중");
+            System.out.println("---- CLI 게시판 ----");
+            System.out.println("글번호    글제목");
+            System.out.print("\t\t ");// 간격 맞추기용
+            c.getPostList();
 
+            System.out.println("---- 명령어 ----");
+            System.out.println("게시글을 읽으려면 글번호를 입력하세요. ");
             System.out.println("게시글을 작성하려면 \"write\"를 입력하세요.");
             System.out.println("게시글을 삭제하려면 \"delete\"를 입력하세요.");
             System.out.println("원하는 항목을 입력해주세요 : ");
@@ -46,12 +49,14 @@ public class MainView {
         c.createPostName(postName);
         // 입력값 받아서 txt파일 생성(게시글 제목으로 쓸 예정)
 
-        System.out.println("내용을 입력해주세요. : ");
         boolean stopInput = true;
-        do{
+
+        while(stopInput){
+            System.out.println("내용을 입력해주세요. : ");
             String content = sc.nextLine();
-            c.createPostContent(content);
+            c.createPostContent(content,postName);
             // 내용입력
+
             System.out.println("더 입력하시겠습니까?(Y/N)");
             String cho = sc.nextLine();
 
@@ -60,8 +65,8 @@ public class MainView {
                 // 반복문 종료
                 stopInput = false;
             }
+        }
 
-        }while(stopInput);
     }
 
     public void deletePost() {
