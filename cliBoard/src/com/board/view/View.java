@@ -12,7 +12,7 @@ public class View {
         while(true){
             System.out.println("==================== 게시판 ====================");
             System.out.print("글 번호\t\t");
-            System.out.print("글 제목");
+            System.out.println("글 제목");
 
             try {
                 pc.postListPrint();

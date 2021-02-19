@@ -96,8 +96,9 @@ public class Post {
                 +File.separator+postTitle+".txt");
 
         if(checkPost.exists()){
-
             checkPost.delete();
+            content.remove(postTitle);
+
             return true;
 
         }else
