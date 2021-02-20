@@ -2,14 +2,11 @@ package com.board.model.dao;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class Post {
     private ArrayList<String> content = new ArrayList<String>();
     // 파일 이름 저장위함 -> 게시판 글제목으로 출력
-
-    private final String id = "admin";
-    private final String psw = "admin";
-    // 글 삭제위한 id,psw
 
     private File f = new File(".");
     private String path = f.getAbsolutePath();
@@ -78,17 +75,48 @@ public class Post {
 
     }
 
+    public void saveAdminInfo(){
+        // 관리자 아이디를 생성하고 파일에 저장.
+
+        Properties adminInfo = new Properties();
+        adminInfo.setProperty("adminId","admin");
+        // 관리자 아이디 "admin"
+        adminInfo.setProperty("adminPsw","admin");
+        // 관리자 비밀번호 "admin"
+
+        try{
+            adminInfo.store(new FileOutputStream("adminInfo.txt"),"adminData");
+
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
 
 
     public boolean checkInfo(String id, String psw){
         // 게시글 삭제위해 관리자 아이디와 비교하는 메소드.
         // id psw 비교하고 맞으면 true, 틀리면 false.
 
-        if( this.id.equals(id) && this.psw.equals(psw) ){
-            return true;
-        }else
-            return false;
+        Properties loadAdminInfo = new Properties();
 
+        try{
+            loadAdminInfo.load(new FileInputStream("info.txt"));
+
+            if(loadAdminInfo.getProperty("adminId").equals(id) &&
+                 loadAdminInfo.getProperty("adminPsw").equals(psw)) {
+                return true;
+            }
+
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
     public boolean deletePost(String postTitle){
@@ -109,11 +137,38 @@ public class Post {
 
     public void postListPrint(){
         // 게시판 글 리스트 출력위한 메소드
-        int postNo = 1; // 글번호
-        for (int i = 0; i < content.size(); i++) {
-            String postList = content.get(i);
-            System.out.println( postNo +"\t\t\t" + postList );
-            postNo++;
+//        int postNo = 1; // 글번호
+//        for (int i = 0; i < content.size(); i++) {
+//            String postList = content.get(i);
+//            System.out.println( postNo +"\t\t\t" + postList );
+//            postNo++;
+//        }
+
+        /*
+         이렇게하면 실행시 번호와 리스트는 잘 나오고 유지되지만
+         프로그램을 재시작하면 번호와 리스트가 초기화됨
+         생각해본 해결책
+         1. 파일이 저장된 디렉토리에 있는 파일 리스트를 읽어서 출력
+         -> 그럴경우 글 번호를 어떻게 붙여야하지?
+         -> 생성일자를 가져오고 파일제목 가져와서 붙여서 반환해야하나?
+
+         해결 순서 ->
+         1. 디렉토리에 있는 파일리스트를 읽어오기
+         2. String[] 배열에 저장
+         3. 배열값가져와서 반복문 돌려서 형식에 맞게 저장.
+         4. 확장자 제거하고 출력
+         */
+
+        File checkPostList = new File(path+File.separator+"board");
+        String[] list = checkPostList.list();
+        // 디렉토리에있는 파일리스트 가져와서 배열에 저장.
+
+        for(int i = 0; i< list.length; i++){
+            String printList = (i+1)+"\t\t\t"+list[i];
+            // 파일리스트를 글번호 글제목 형식에 맞게 printList에 저장.
+
+            System.out.println(printList.replace(".txt",""));
+            // 파일 확장자 제거.
         }
 
     }
