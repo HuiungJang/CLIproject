@@ -12,9 +12,24 @@ public class Post {
     private String path = f.getAbsolutePath();
     // 절대경로 가져오기용
 
+    public void makeDir(){
+        // 게시글 저장할 디렉토리 만드는 메소드
+        // board 디렉토리 없으면 생성.
+        File makeDir = new File(path+File.separator+"board");
+
+        if(!makeDir.exists()){
+            makeDir.mkdir();
+        }else
+            return;
+
+    }
+
     public void createPost(String title){
         // 게시글 생성
         // 입력값 전달받아서 파일 생성.
+
+        makeDir();
+        // board 디렉토리 없으면 생성.
 
         File createPostFile = new File(path+File.separator+"board"
                 +File.separator+title+".txt");
