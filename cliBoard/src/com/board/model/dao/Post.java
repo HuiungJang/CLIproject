@@ -118,7 +118,7 @@ public class Post {
         Properties loadAdminInfo = new Properties();
 
         try{
-            loadAdminInfo.load(new FileInputStream("info.txt"));
+            loadAdminInfo.load(new FileInputStream("adminInfo.txt"));
 
             if(loadAdminInfo.getProperty("adminId").equals(id) &&
                  loadAdminInfo.getProperty("adminPsw").equals(psw)) {
@@ -182,7 +182,7 @@ public class Post {
             String printList = (i+1)+"\t\t\t"+list[i];
             // 파일리스트를 글번호 글제목 형식에 맞게 printList에 저장.
 
-            System.out.println(printList.replace(".txt",""));
+            //System.out.println(printList.replace(".txt",""));
             // 파일 확장자 제거.
         }
 

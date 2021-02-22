@@ -29,6 +29,13 @@ public class PostController {
         p.postListPrint();
     }
 
+    public void signIn(){
+
+    }
+
+    public void signUp(){
+
+    }
 
 }
 
