@@ -33,8 +33,11 @@ public class PostController {
 
     }
 
-    public void signUp(){
-
+    public void memberInfoFile(String id){
+        p.memberInfoFile(id);
+    }
+    public boolean signUp(String id, String psw){
+        return p.signUp(id, psw);
     }
 
 }

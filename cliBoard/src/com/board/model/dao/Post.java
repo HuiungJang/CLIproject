@@ -7,15 +7,31 @@ import java.util.Properties;
 public class Post {
     private ArrayList<String> content = new ArrayList<String>();
     // 파일 이름 저장위함 -> 게시판 글제목으로 출력
+    private Properties signUp = new Properties();
+    // 회원관리 위함.
 
     private File f = new File(".");
     private String path = f.getAbsolutePath();
     // 절대경로 가져오기용
 
+
+
     public void makeDir(){
         // 게시글 저장할 디렉토리 만드는 메소드
         // board 디렉토리 없으면 생성.
         File makeDir = new File(path+File.separator+"board");
+
+        if(!makeDir.exists()){
+            makeDir.mkdir();
+        }else
+            return;
+
+    }
+
+    public void makeMemberInfoDir(){
+        // 회원가입한 회원정보 저장할 디렉토리 만드는 메소드
+        // memberInfo 디렉토리 없으면 생성.
+        File makeDir = new File(path+File.separator+"memberInfo");
 
         if(!makeDir.exists()){
             makeDir.mkdir();
@@ -30,6 +46,8 @@ public class Post {
 
         makeDir();
         // board 디렉토리 없으면 생성.
+        makeMemberInfoDir();
+        // memberInfo 디렉토리 없으면 생성
 
         File createPostFile = new File(path+File.separator+"board"
                 +File.separator+title+".txt");
@@ -186,6 +204,63 @@ public class Post {
             // 파일 확장자 제거.
         }
 
+    }
+    public void memberInfoFile(String id){
+        File memberInfoFile = new File(path+File.separator+"memberInfo"
+                +File.separator+id+".txt");
+
+        try{
+            memberInfoFile.createNewFile();
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    public boolean signUp(String id, String psw){
+        File checkMemberInfoFile = new File(path+File.separator+"memberInfo"
+                +File.separator+id+".txt");
+
+        if( !(checkMemberInfoFile.exists()) ){
+            memberInfoFile(id);
+            // 파일경로 가져와서 그 경로에 파일이 없으면 멤버정보 저장할 파일 생성 메소드 실행
+        }else {
+            signUp.setProperty(id,psw);
+            try {
+                // key 값을 아이디, value값을 비밀번호로 저장
+                // key 값은 중복허용 안되는 아이디고 비밀번호는 중복이어도 상관없다.
+                File checkIdList = new File(path + File.separator + "memberInfo");
+                String[] list = checkIdList.list();
+
+                /*
+                회원가입 시 입력되는 아이디로 파일이름을 만들었고
+                이 메소드가 실행될때 id가 없으면 id를 제목으로한 파일을 만들라고함
+                파일이 보관되는 디렉토리에는 id를 이름으로한 파일들이 있다.
+                그 리스트를 가져와서 입력된 id와 비교했을 때 일치하면 아이디가 중복된것.
+                 */
+
+                for (int i = 0; i<list.length; i++){
+                    if ( !(list[i].equals(id+".txt")) ) {
+                        // 아이디 중복이 아니면.
+                        signUp.store(new FileWriter(path + File.separator + "memberInfo"
+                            + File.separator + id + ".txt"), "memberdata");
+                        return true;
+                    }else
+                        // 아이디가 중복이면.
+                        return false;
+                }
+
+            }catch(FileNotFoundException e){
+                e.printStackTrace();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+
+
+        }
+        return false;
     }
 
 

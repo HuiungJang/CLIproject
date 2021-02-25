@@ -206,9 +206,17 @@ public class View {
         System.out.print("사용 할 아이디를 입력해주세요 : ");
         String id = sc.nextLine();
 
+
         System.out.print("사용 할 비밀번호를 입력해주세요 : ");
         String psw = sc.nextLine();
 
+        pc.memberInfoFile(id);
+        // 입력받아서 회원정보 파일 생성.
+       if( pc.signUp(id, psw)){
+           // 생성된 회원 정보파일에 아이디, 비밀번호 저장.
+           System.out.println("회원가입이 완료되었습니다.");
+       }else
+           System.out.println("이미 사용중인 아이디입니다. 다시 회원가입을 해주세요.");
         System.out.println("=================================================");
     }
 
