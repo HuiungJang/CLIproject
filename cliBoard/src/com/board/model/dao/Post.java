@@ -7,8 +7,6 @@ import java.util.Properties;
 public class Post {
     private ArrayList<String> content = new ArrayList<String>();
     // 파일 이름 저장위함 -> 게시판 글제목으로 출력
-    private Properties signUp = new Properties();
-    // 회원관리 위함.
 
     private File f = new File(".");
     private String path = f.getAbsolutePath();
@@ -46,8 +44,6 @@ public class Post {
 
         makeDir();
         // board 디렉토리 없으면 생성.
-        makeMemberInfoDir();
-        // memberInfo 디렉토리 없으면 생성
 
         File createPostFile = new File(path+File.separator+"board"
                 +File.separator+title+".txt");
@@ -200,66 +196,69 @@ public class Post {
             String printList = (i+1)+"\t\t\t"+list[i];
             // 파일리스트를 글번호 글제목 형식에 맞게 printList에 저장.
 
-            //System.out.println(printList.replace(".txt",""));
+            System.out.println(printList.replace(".txt",""));
             // 파일 확장자 제거.
         }
 
     }
-    public void memberInfoFile(String id){
+
+    public boolean signUp(String id, String psw){
+        makeMemberInfoDir();
+        // 디렉토리 생성
+
         File memberInfoFile = new File(path+File.separator+"memberInfo"
-                +File.separator+id+".txt");
+                                         +File.separator+id+psw);
+        // 아이디와 비밀번호를 이름으로 가진 파일 생성 -> 회원가입 끝
 
-        try{
+        try {
+            File checkIdList = new File(path + File.separator + "memberInfo");
+            String[] list = checkIdList.list();
+            // 디렉토리에서 파일이름을 가져와서 저장.
+
+            for (int i = 0; i<list.length; i++){
+                if ( list[i].contains(id) ) {
+                    // 파일이름에 아이디가 포함되어 있으면 -> 중복
+                    return false; // 회원가입 실패
+                }
+            }
+            // 위에 반복문이 다돌았다 -> 중복이 없다
             memberInfoFile.createNewFile();
+            // 파일 생성
+            return true;
 
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
         }catch(IOException e){
             e.printStackTrace();
         }
+
+        return false;
     }
 
 
+    public boolean signIn(String id, String psw){
+        File checkIdList = new File(path + File.separator + "memberInfo");
+        String[] list = checkIdList.list();
 
-    public boolean signUp(String id, String psw){
-        File checkMemberInfoFile = new File(path+File.separator+"memberInfo"
-                +File.separator+id+".txt");
+        for(int i =0; i<list.length; i++) {
+            if (list[i].equals(id+psw)) {
+                // 디렉토리에 id와 같은이름의 파일이 있으면
+                return true;
+                // 파일에서 value값 가져오고 그 값이 비밀번호와 같으면 트루
+                // -> 로그인 성공
 
-        if( !(checkMemberInfoFile.exists()) ){
-            memberInfoFile(id);
-            // 파일경로 가져와서 그 경로에 파일이 없으면 멤버정보 저장할 파일 생성 메소드 실행
-        }else {
-            signUp.setProperty(id,psw);
-            try {
-                // key 값을 아이디, value값을 비밀번호로 저장
-                // key 값은 중복허용 안되는 아이디고 비밀번호는 중복이어도 상관없다.
-                File checkIdList = new File(path + File.separator + "memberInfo");
-                String[] list = checkIdList.list();
+                // 문제점
+                // 회원가입했을때 바로 로그인하면
+                // 키,벨류값이 남아있어서 로그인이 됨.
+                // 다시 로그인 하려면 키,벨류값이 초기화되어서 로그인이 안됨.
 
-                /*
-                회원가입 시 입력되는 아이디로 파일이름을 만들었고
-                이 메소드가 실행될때 id가 없으면 id를 제목으로한 파일을 만들라고함
-                파일이 보관되는 디렉토리에는 id를 이름으로한 파일들이 있다.
-                그 리스트를 가져와서 입력된 id와 비교했을 때 일치하면 아이디가 중복된것.
-                 */
-
-                for (int i = 0; i<list.length; i++){
-                    if ( !(list[i].equals(id+".txt")) ) {
-                        // 아이디 중복이 아니면.
-                        signUp.store(new FileWriter(path + File.separator + "memberInfo"
-                            + File.separator + id + ".txt"), "memberdata");
-                        return true;
-                    }else
-                        // 아이디가 중복이면.
-                        return false;
-                }
-
-            }catch(FileNotFoundException e){
-                e.printStackTrace();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-
-
+                // 생각해본 해결방안
+                // 1. 파일이름을 아이디+비밀번호로 받고
+                //    로그인시 그걸로 검증하기
+            }else
+                return false; // 로그인 실패
         }
+
         return false;
     }
 

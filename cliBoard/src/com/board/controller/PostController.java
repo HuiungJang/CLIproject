@@ -29,13 +29,10 @@ public class PostController {
         p.postListPrint();
     }
 
-    public void signIn(){
-
+    public boolean signIn(String id, String psw){
+        return p.signIn(id,psw);
     }
 
-    public void memberInfoFile(String id){
-        p.memberInfoFile(id);
-    }
     public boolean signUp(String id, String psw){
         return p.signUp(id, psw);
     }

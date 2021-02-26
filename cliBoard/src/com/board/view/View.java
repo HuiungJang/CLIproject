@@ -34,9 +34,9 @@ public class View {
 
                     System.out.println();
                     System.out.println("================================================");
-                    System.out.println("게시글을 보려면  \'post\'를 입력해주세요");
-                    System.out.println("게시글을 작성하려면  \'write\'를 입력해주세요");
-                    System.out.println("게시글을 삭제하려면  \'delete\'를 입력해주세요");
+                    System.out.println("게시글을 보려면  'post'를 입력해주세요");
+                    System.out.println("게시글을 작성하려면  'write'를 입력해주세요");
+                    System.out.println("게시글을 삭제하려면  'delete'를 입력해주세요");
                     System.out.print("어떤 것을 하시겠습니까? : ");
                     String cho = sc.nextLine();
 
@@ -94,6 +94,7 @@ public class View {
             2. 형식은 아이디와 비밀번호만 입력받기
             3. 입력받은 정보를 Property 형식(key: 아이디, value: 비밀번호)으로 저장하고 파일이름을 아이디로하기
             4. 회원정보 모아둔 디렉토리의 파일 목록불러와서 일치하는 것이 있는지 확인
+            --> 구현완료
 
         로그인 흐름 개념
             1. 글작성 메소드에서 조건에 따라 로그인 메소드 호출
@@ -106,13 +107,19 @@ public class View {
                 5-2 아이디 불일치하면 -> false
             6. false가 나오면 "로그인 실패"
             7. true가 나오면 "로그인 성공"
+            -->  구현실패
+            -->  문제점
+                 회원가입했을때 바로 로그인하면
+                 키,벨류값이 남아있어서 로그인이 됨.
+                 다시 로그인 하려면 키,벨류값이 초기화되어서 로그인이 안됨.
 
+                 생각해본 해결방안
+                 1. 파일이름을 아이디+비밀번호로 받고
+                    로그인시 그걸로 검증하기
+                    -> 구현완
          로그아웃 흐름 개념
-            1. 글작성 후 로그아웃 할껀지 물어봄
-                1-1 로그아웃 안한다면 글작성 더 할 껀지 물어봄
-                    1-1-1 글작성 한다면 다시 글작성 메소드 호출
-                    2-1-2 글작성 안한다면 메인으로 돌아감 -> 로그아웃
-                1-2 로그아웃 한다면 메인으로 돌아감 -> 로그아웃
+            1. 입력 종료 -> 로그아웃(메인으로 돌아감)
+
 
 
 
@@ -132,32 +139,47 @@ public class View {
 
     public void writePost() {
         System.out.println("==================== 글 작성 ====================");
-        System.out.print("게시글 제목을 입력해주세요 : ");
-        String title = sc.nextLine();
+        System.out.println("회원만 글을 작성 할 수 있습니다. ");
+        // 아이디가 있는지 물어보고 없으면 회원가입하기
+        System.out.println("로그인 하시겠습니까? (Y/N)");
+        System.out.println("회원가입하시려면 'N'을 입력해주세요");
+        String yn = sc.nextLine();
 
-        pc.createPost(title);
-        // 입력받아서 게시글 생성.
-        boolean stop = true;
+        if(yn.toUpperCase().equals("Y")) {
+            // 로그인하도록하기
+            if (signIn()) {
+                // 로그인 성공했으면 게시물 작성
+                System.out.print("게시글 제목을 입력해주세요 : ");
+                String title = sc.nextLine();
 
-        while(stop) {
+                pc.createPost(title);
+                // 입력받아서 게시글 생성.
+                boolean stop = true;
 
-            System.out.print("게시글 내용을 입력해주세요 : ");
-            String content = sc.nextLine();
+                while (stop) {
 
-            if(content.toLowerCase().equals("exit")){
-                stop = false;
-            }else{
-                pc.createPostContent(title, content);
-                // 입력받은 제목으로 파일 특정하고
-                // 내용 추가하기.
-            }
+                    System.out.print("게시글 내용을 입력해주세요 : ");
+                    String content = sc.nextLine();
 
-            System.out.println("입력을 종료하려면 \' exit \'를 입력해주세요");
+                    if (content.toLowerCase().equals("exit")) {
+                        stop = false;
+                    } else {
+                        pc.createPostContent(title, content);
+                        // 입력받은 제목으로 파일 특정하고
+                        // 내용 추가하기.
+                    }
 
-
-        }
-        System.out.println("=================================================");
-
+                    System.out.println("입력을 종료하려면 ' exit '를 입력해주세요");
+                    System.out.println("입력이 종료되면 자동으로 로그아웃 됩니다.");
+                }
+                System.out.println("=================================================");
+            } else
+                // 로그인실패면
+                System.out.println("로그인에 실패했습니다. 다시 시도해주세요. ");
+        }else if(yn.toUpperCase().equals("N")) {
+            signUp();
+        }else
+            System.out.println("잘못 입력하셨습니다.");
     }
 
     public void deletePost() {
@@ -210,8 +232,6 @@ public class View {
         System.out.print("사용 할 비밀번호를 입력해주세요 : ");
         String psw = sc.nextLine();
 
-        pc.memberInfoFile(id);
-        // 입력받아서 회원정보 파일 생성.
        if( pc.signUp(id, psw)){
            // 생성된 회원 정보파일에 아이디, 비밀번호 저장.
            System.out.println("회원가입이 완료되었습니다.");
@@ -221,26 +241,21 @@ public class View {
     }
 
 
-    public void signIn(){
+    public boolean signIn(){
         System.out.println("===================== 로그인 =====================");
         System.out.print("아이디를 입력해주세요 : ");
         String id = sc.nextLine();
-
         System.out.print("비밀번호를 입력해주세요 : ");
         String psw = sc.nextLine();
 
+        if(pc.signIn(id,psw)){
+            System.out.println("로그인 되었습니다.");
+            return true;
+        }
 
         System.out.println("=================================================");
+
+        return false;
     }
 
-
-    public void logout(){
-        System.out.println("==================== 로그아웃 ====================");
-        System.out.print("정말 로그아웃 하시겠습니까? (Y/N)");
-        String logout = sc.nextLine();
-
-
-
-        System.out.println("=================================================");
-    }
 }
