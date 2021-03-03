@@ -24,10 +24,12 @@ public class View {
 
                     System.out.println("==================== 게시판 ====================");
                     System.out.print("글 번호\t\t");
-                    System.out.println("글 제목");
+                    System.out.print("글 제목\t\t");
+                    System.out.println("작성 일자");
 
                     try {
                         pc.postListPrint();
+                        pc.printPostDate();
                     } catch (NullPointerException e) {
                         // 처음 시작 시는 파일이 없으니까 Exception 방지
                     }

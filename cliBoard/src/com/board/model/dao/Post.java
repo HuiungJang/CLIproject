@@ -1,7 +1,12 @@
 package com.board.model.dao;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 
 public class Post {
@@ -26,6 +31,17 @@ public class Post {
 
     }
 
+    public void makeDateDir(){
+        File makeDateDir = new File(path+File.separator+"postdate");
+        // 파일생성 일자를 가지는 파일을 저장할 디렉토리 만들기
+        // 없으면 디렉토리 생성.
+
+        if(!makeDateDir.exists()){
+            makeDateDir.mkdir();
+        }else
+            return;
+    }
+
     public void makeMemberInfoDir(){
         // 회원가입한 회원정보 저장할 디렉토리 만드는 메소드
         // memberInfo 디렉토리 없으면 생성.
@@ -45,22 +61,78 @@ public class Post {
         makeDir();
         // board 디렉토리 없으면 생성.
 
+        makeDateDir();
+        // postdate 디렉토리 없으면 생성.
+
         File createPostFile = new File(path+File.separator+"board"
                 +File.separator+title+".txt");
 
         try{
             createPostFile.createNewFile();
+            String fileName = createPostFile.getName();
+
+            content.add(fileName.replace(".txt","") );
+            // 확장자 제거하고 파일이름만 저장.
 
         }catch(IOException e){
             e.printStackTrace();
         }
 
-        String fileName = createPostFile.getName();
-        content.add(fileName.replace(".txt",""));
-        // 확장자 제거하고 파일이름만 저장.
-
     }
 
+    /*
+    파일 생성일자를 파일이름과 같이 출력하고 싶다.
+       문제점
+        1. 생성일자를 String 타입으로 저장함 -> 프로그램 재시작하면 유지가 안됨.
+        해결책
+        - 1. 파일 생성시 파일이름에 생성일자 붙여서 출력
+            -> 파일 생성돼야 생성일자가 나오는데 그러면 이미 파일이름에 생성일자를 붙일수가 없음. => 불가
+
+        - 2. 완성된 파일에 생성일자 붙여서 다시 저장
+            -> 파일에 내용을 추가할때 파일이름으로 해당파일을 찾는데
+                날짜까지 붙여서 찾아야하고 언제인지 일일히 봐가면서 해야함 => 불가
+
+        - 3. 파일 생성시 board 디렉토리에 게시글 제목을 가진 파일 1개 만들고
+             새로운 디렉토리에 그 파일의 생성일자를 제목으로 하는 파일을 만들어서 저장
+             메인에서 게시글 출력시 board 디렉토리에서 1개 출력 생성일자 디렉토리에서 1개 출력하면 될
+            => 해결
+                아쉬운점 만약, 게시글 생성시 작성일자 파일이 없이 생성됐다면 작성일자는 없이 출력됨.
+
+     */
+
+    public void createPostDate(String title){
+        // 게시글 작성일자를 가진 파일만들기.
+        BasicFileAttributes attrs = null;
+
+        File postPath = new File(path+File.separator+"board"
+                +File.separator+title+".txt");
+        // 게시글 경로 가져오기
+
+        try {
+            attrs = Files.readAttributes(postPath.toPath(), BasicFileAttributes.class);
+            // 경로에 있는 파일의 속성값 가져온다.
+
+            FileTime time = attrs.creationTime();
+            // 파일의 속성값중 만들어진 시간을 가져와서 time에 저장.
+
+            String pattern = "yyyy-MM-dd";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            // pattern의 형식대로 날짜를 출력하겠다.
+
+            String formatted = simpleDateFormat.format(new Date(time.toMillis()));
+            // 파일이 만들어진 시간을 pattern 형식대로 변환.
+            // 여기까지가 게시글 파일 이름 가져와서
+            // 그 파일에 대한 생성일자 가져와서 formatted 에 저장.
+
+            File postDate = new File(path+File.separator+"postdate"+File.separator+formatted);
+            postDate.createNewFile();
+            // 그 생성일자를 이름으로 갖는 파일 만들기
+
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public void createPostContent(String title, String content){
         // 게시글 내용 넣기
@@ -193,13 +265,26 @@ public class Post {
         // 디렉토리에있는 파일리스트 가져와서 배열에 저장.
 
         for(int i = 0; i< list.length; i++){
-            String printList = (i+1)+"\t\t\t"+list[i];
+            String printList = (i+1)+"\t\t\t"+list[i]+"\t\t";
             // 파일리스트를 글번호 글제목 형식에 맞게 printList에 저장.
 
-            System.out.println(printList.replace(".txt",""));
+            System.out.print(printList.replace(".txt",""));
             // 파일 확장자 제거.
         }
 
+    }
+
+    public void printPostDate(){
+        // 파일 작성일자 출력하는 메소드.
+
+        File checkPostList = new File(path+File.separator+"postdate");
+        String[] list = checkPostList.list();
+        // 디렉토리에있는 파일리스트 가져와서 배열에 저장.
+
+        for(int i = 0; i<list.length; i++){
+            String printList = list[i];
+            System.out.println(printList);
+        }
     }
 
     public boolean signUp(String id, String psw){
