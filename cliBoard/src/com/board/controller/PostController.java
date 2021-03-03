@@ -30,11 +30,6 @@ public class PostController {
         p.postListPrint();
     }
 
-    public void printPostDate(){
-        p.printPostDate();
-    }
-
-
     public boolean signIn(String id, String psw){
         return p.signIn(id,psw);
     }

@@ -29,7 +29,6 @@ public class View {
 
                     try {
                         pc.postListPrint();
-                        pc.printPostDate();
                     } catch (NullPointerException e) {
                         // 처음 시작 시는 파일이 없으니까 Exception 방지
                     }

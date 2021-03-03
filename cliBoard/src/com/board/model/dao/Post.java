@@ -264,27 +264,20 @@ public class Post {
         String[] list = checkPostList.list();
         // 디렉토리에있는 파일리스트 가져와서 배열에 저장.
 
+        File checkDateList = new File(path+File.separator+"postdate");
+        String[] dateList = checkDateList.list();
+        // 디렉토리에있는 파일생성 날짜리스트 가져와서 배열에 저장.
+
         for(int i = 0; i< list.length; i++){
             String printList = (i+1)+"\t\t\t"+list[i]+"\t\t";
-            // 파일리스트를 글번호 글제목 형식에 맞게 printList에 저장.
+            String printDateList = dateList[i];
+            // 파일리스트와 작성날짜를 글번호 글제목 작성날짜 형식에 맞게 각각 배열에 저장.
 
             System.out.print(printList.replace(".txt",""));
             // 파일 확장자 제거.
+            System.out.println(printDateList);
         }
 
-    }
-
-    public void printPostDate(){
-        // 파일 작성일자 출력하는 메소드.
-
-        File checkPostList = new File(path+File.separator+"postdate");
-        String[] list = checkPostList.list();
-        // 디렉토리에있는 파일리스트 가져와서 배열에 저장.
-
-        for(int i = 0; i<list.length; i++){
-            String printList = list[i];
-            System.out.println(printList);
-        }
     }
 
     public boolean signUp(String id, String psw){
